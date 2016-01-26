@@ -1,0 +1,32 @@
+#!/usr/bin/env python
+# encoding:utf-8
+# 管理员密码每分钟一更新算法
+# ------------------------------------------------
+#  author : lauix                   
+#  e-mail : lauixData@gmail.com     
+#  -----------------------------------------------
+
+import os,time,md5
+
+dataTime = time.strftime('%Y%m%d%H%M',time.localtime(time.time()))
+today = dataTime[4:6]
+month = dataTime[6:8]
+sum = int(month)+int(today)+1024
+passwd = "xxoo@%s@%d!"%(dataTime,sum)
+md5 = md5.new()
+md5.update(passwd)   
+passwdMd5 = md5.hexdigest()
+updateSqlPass='mysql -uroot -proot -e"use test;UPDATE test SET password=\''+passwdMd5+'\'WHERE id=1;"'
+print updateSqlPass
+os.system(updateSqlPass)
+
+#以下是shell脚本 
+#! /bin/bash
+# author : lauix
+# email : lauixData@gmail.com
+
+dateTime=$(date +%Y%m%d%H%M)
+let sum=$month+$today
+passwd="Ainn0team@${dateTime}@${sum}!"
+passwdMd5=$passwd|md5sum|cut -d ' ' -f1
+mysql -uroot -proot -e"use test;UPDATE test SET password='${passwdMd5}' WHERE uid=1;"
